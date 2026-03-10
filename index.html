@@ -109,18 +109,27 @@
           <div className="absolute left-6 top-1/2 -translate-y-1/2 w-24 h-8 bg-[#fdd9ef]/60 blur-xl rounded-full"></div>
           <div className="flex flex-col justify-center ml-2 relative z-10">
             <div className="flex items-center gap-1">
-              <h1 className="text-2xl font-black italic tracking-tighter flex">
-                {"CoolKiz".split('').map((char, index) => (
-                  <span key={index} className="bg-gradient-to-br from-[#827397] to-[#a38ab5] bg-clip-text text-transparent drop-shadow-sm inline-block animate-text-wave" style={{ animationDelay: `${index * 0.1}s` }}>{char}</span>
+              
+              {/* --- แก้ไขการตัดขอบตรงนี้ (เพิ่ม items-center, py-1, leading-none และเอาเงาออก) --- */}
+              <h1 className="text-2xl font-black italic tracking-tighter flex items-center">
+                {"CooKiz".split('').map((char, index) => (
+                  <span 
+                    key={index} 
+                    className="bg-gradient-to-br from-[#827397] to-[#a38ab5] bg-clip-text text-transparent inline-block animate-text-wave py-1 leading-none" 
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    {char}
+                  </span>
                 ))}
               </h1>
+              
               <button onClick={() => isAdmin ? setIsAdmin(false) : setShowAuthModal(true)} className={`px-1.5 py-0.5 ml-1 rounded-full text-[7px] font-black uppercase tracking-widest border shadow-sm transition-all active:scale-95 ${isAdmin ? 'bg-white/60 text-[#827397] border-[#b5a8c2]' : 'bg-gray-100/80 text-gray-400 border-gray-200'}`}>
                 {isAdmin ? 'Admin' : 'Guest'}
               </button>
             </div>
             <div className="flex items-center gap-1.5 opacity-70">
               <div className="w-3 h-[1px]" style={{ backgroundColor: COLORS.pinkDeep }}></div>
-              <p className="text-[8px] font-black tracking-[0.5em] uppercase" style={{ color: COLORS.purpleDeep }}>Renewed App Premium</p>
+              <p className="text-[8px] font-black tracking-[0.5em] uppercase" style={{ color: COLORS.purpleDeep }}>RENEWED APP PREMIUM</p>
             </div>
           </div>
           <div onClick={isAdmin ? handleImageUpload : undefined} className={`w-16 h-16 rounded-[1.25rem] bg-white border-2 border-white flex items-center justify-center relative overflow-hidden transition-transform ${isAdmin ? 'cursor-pointer hover:scale-105 active:scale-95' : ''}`}>
@@ -136,7 +145,7 @@
         </div>
       </div>
     ));
-
+    
     const CheckDateCard = React.memo(({ checkDays, dueInXTasksLength, onOpenDaysModal, onCardClick, isActive }) => (
       <div 
         onClick={onCardClick}
@@ -1000,4 +1009,5 @@
   </script>
 </body>
 </html>
+
 
