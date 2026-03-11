@@ -35,14 +35,8 @@
   <script type="text/babel">
     const { useState, useMemo, useEffect, useCallback } = React;
 
-    // ==========================================
-    // 🔗 API URL (เชื่อมกับ Google Apps Script)
-    // ==========================================
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwB0c0cG7efvO4-AlcnRtB0QqB1roDG-skqn4qg2khjJ-BUNr27NFdj5L2CBUQvy6M-/exec";
 
-    // ==========================================
-    // 🖼️ COMPONENTS: ไอคอน SVG สำหรับ UI
-    // ==========================================
     const IconPlus = ({size=24, className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
     const IconHome = ({size=24, className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>;
     const IconSearch = ({size=24, className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>;
@@ -60,22 +54,19 @@
     const IconTrash = ({size=24, className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
     const IconAlertTriangle = ({size=24, className=""}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>;
 
-    // ==========================================
-    // 🎨 ตัวแปรสีหลัก (COLORS Object)
-    // ==========================================
     const COLORS = {
-      blue: '#e9f4fa',       
-      pink: '#fdd9ef',       
-      purple: '#eed5f8',     
-      orange: '#ffe9ef',     
-      bg: '#fffcf7',         
-      white: '#FFFFFF',      
-      pinkDeep: '#ffb8e1',   
-      textMain: '#827397',   
-      textSoft: '#a89cb5',   
-      blueDeep: '#8FA4B5',   
-      purpleDeep: '#a38ab5', 
-      orangeDeep: '#e3a1c0', 
+      blue: '#e9f4fa',
+      pink: '#fdd9ef',
+      purple: '#eed5f8',
+      orange: '#ffe9ef',
+      bg: '#fffcf7',
+      white: '#FFFFFF',
+      pinkDeep: '#ffb8e1',
+      textMain: '#827397',
+      textSoft: '#a89cb5',
+      blueDeep: '#8FA4B5',
+      purpleDeep: '#a38ab5',
+      orangeDeep: '#e3a1c0',
     };
 
     const FluffyCloud = React.memo(({ top, left, right, bottom, scale = 1, opacity = 0.7, delay = '0s', reverse = false }) => (
@@ -103,19 +94,30 @@
       </div>
     ));
 
+    // ✅ แก้ไข 3 จุดสำหรับ iOS Safari:
+    // 1. header card: overflow-hidden → overflow-visible (ป้องกัน clip animation)
+    // 2. wrapper div ของ h1: เพิ่ม py-1 overflow-visible
+    // 3. h1 + span: เพิ่ม willChange, WebkitTransform เพื่อ force GPU layer
     const Header = React.memo(({ isAdmin, setIsAdmin, setShowAuthModal, handleImageUpload, profileImage }) => (
       <div className="px-5 pt-6 pb-2 relative z-10">
-        <div className="bg-white/40 backdrop-blur-md rounded-[32px] p-4 shadow-xl shadow-[#e9f4fa]/50 border border-white/50 flex items-center justify-between h-20 relative overflow-hidden group">
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 w-24 h-8 bg-[#fdd9ef]/60 blur-xl rounded-full"></div>
-          <div className="flex flex-col justify-center ml-2 relative z-10">
+        <div className="bg-white/40 backdrop-blur-md rounded-[32px] p-4 shadow-xl shadow-[#e9f4fa]/50 border border-white/50 flex items-center justify-between h-20 relative overflow-visible group">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 w-24 h-8 bg-[#fdd9ef]/60 blur-xl rounded-full pointer-events-none"></div>
+          <div className="flex flex-col justify-center ml-2 relative z-10 py-1 overflow-visible">
             <div className="flex items-center gap-1.5 pb-1">
-              
-              <h1 className="text-2xl font-black italic tracking-tighter flex items-center text-[#827397] pt-1">
+
+              <h1
+                className="text-2xl font-black italic tracking-tighter flex items-center text-[#827397] pt-1"
+                style={{ overflow: 'visible', WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)' }}
+              >
                 {"CoolKiz".split('').map((char, index) => (
-                  <span 
-                    key={index} 
-                    className="inline-block animate-text-wave px-[1px]" 
-                    style={{ animationDelay: `${index * 0.1}s` }}
+                  <span
+                    key={index}
+                    className="inline-block animate-text-wave px-[1px]"
+                    style={{
+                      animationDelay: `${index * 0.1}s`,
+                      willChange: 'transform',
+                      WebkitTransform: 'translateZ(0)',
+                    }}
                   >
                     {char}
                   </span>
@@ -184,18 +186,13 @@
       </div>
     ));
 
-    // ==========================================
-    // 🃏 COMPONENT: TaskCard (การ์ดรายการ)
-    // ==========================================
     const TaskCard = React.memo(({ task, isAdmin, onEdit, onToggleDoing, onToggleStatus, onToggleCancel }) => {
-      
       const today = new Date();
       today.setHours(0,0,0,0);
       const due = new Date(task.dueDate);
       due.setHours(0,0,0,0);
       const daysDiff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
 
-      // กำหนด Badge สีและข้อความตามสถานะ
       let statusBadge = null;
       if (task.status === 'done') {
           statusBadge = <span className="text-[9px] font-bold bg-gray-50 text-gray-400 px-2 py-0.5 rounded-full border border-gray-100">ต่ออายุแล้ว</span>;
@@ -209,15 +206,14 @@
           statusBadge = <span className="text-[9px] font-bold bg-[#e9f4fa] text-[#8FA4B5] px-2 py-0.5 rounded-full border border-[#e9f4fa]">อีก {daysDiff} วันถึงกำหนด</span>;
       }
 
-      // ระบบเลือก Icon URL
-      let iconUrl = "https://i.ibb.co/Q7HyMmRC/image.png"; 
-      if (task.status === 'done') iconUrl = "https://i.ibb.co/Q7HyMmRC/image.png"; 
-      else if (task.status === 'doing') iconUrl = "https://i.ibb.co/6q4pLWk/image.png"; 
+      let iconUrl = "https://i.ibb.co/Q7HyMmRC/image.png";
+      if (task.status === 'done') iconUrl = "https://i.ibb.co/Q7HyMmRC/image.png";
+      else if (task.status === 'doing') iconUrl = "https://i.ibb.co/6q4pLWk/image.png";
       else if (task.status === 'todo') {
-          if (daysDiff < 0) iconUrl = "https://i.ibb.co/nNfLK8Md/image.png"; 
-          else if (daysDiff >= 0 && daysDiff <= 3) iconUrl = "https://i.ibb.co/Q3rRP3HZ/image.png"; 
+          if (daysDiff < 0) iconUrl = "https://i.ibb.co/nNfLK8Md/image.png";
+          else if (daysDiff >= 0 && daysDiff <= 3) iconUrl = "https://i.ibb.co/Q3rRP3HZ/image.png";
       }
-      else if (task.status === 'cancelled') iconUrl = "https://i.ibb.co/gMTYmhyf/image.png"; 
+      else if (task.status === 'cancelled') iconUrl = "https://i.ibb.co/gMTYmhyf/image.png";
 
       const handleToggleDone = (e) => {
           e.stopPropagation();
@@ -226,19 +222,11 @@
 
       return (
         <div className="flex items-center gap-2 mb-2 w-full relative">
-
           <div className="w-[52px] h-[52px] flex-shrink-0 flex items-center justify-center relative z-20">
-              <img
-                  src={iconUrl}
-                  alt="Status Icon"
-                  className="w-full h-full object-contain animate-float-icon"
-              />
+              <img src={iconUrl} alt="Status Icon" className="w-full h-full object-contain animate-float-icon" />
           </div>
-
           <div onClick={() => isAdmin && onEdit(task)} className={`relative flex-1 z-0 rounded-[22px] p-3 transition-all border shadow-sm group overflow-hidden ${isAdmin ? 'active:scale-[0.98] cursor-pointer' : ''} bg-white/90`} style={{ backgroundColor: (task.status === 'done' || task.status === 'cancelled') ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.95)', borderColor: task.status === 'doing' ? COLORS.orangeDeep : ((task.status === 'done' || task.status === 'cancelled') ? 'transparent' : COLORS.white), opacity: (task.status === 'done' || task.status === 'cancelled') ? 0.7 : 1 }}>
-            
             <div className="absolute left-2 top-3 bottom-3 w-1 rounded-full shadow-sm z-10" style={{ backgroundColor: task.channel === 'LINE' ? '#e9f4fa' : task.channel === 'FB' || task.channel === 'FACEBOOK' ? '#eed5f8' : task.channel === 'IG' ? '#ffe9ef' : COLORS.purpleDeep }}></div>
-            
             <div className="pl-3 pr-1 relative z-10">
               <div className="flex justify-between items-start mb-1 gap-2">
                 <div className="flex flex-col min-w-0 flex-1">
@@ -250,7 +238,6 @@
                   </div>
                   <span className="text-[10px] text-gray-400 truncate w-full block">{task.email}</span>
                 </div>
-                
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">
                   {statusBadge}
                   <div className="flex items-center gap-1 text-[9px] font-black bg-[#fffcf7] px-2 py-0.5 rounded-lg border border-[#ffb8e1] shadow-sm mt-0.5" style={{ color: COLORS.pinkDeep }}>
@@ -259,13 +246,11 @@
                   </div>
                 </div>
               </div>
-              
               <div className="flex justify-between items-end mt-1.5">
                 <div className="flex-1 min-w-0 flex items-center gap-1.5">
                   <span className="text-[7px] px-1.5 py-0.5 rounded-md font-black uppercase border bg-gray-50 text-gray-400 border-gray-100 flex-shrink-0">{task.channel}</span>
                   <span className={`text-[11px] font-bold truncate ${(task.status === 'done' || task.status === 'cancelled') ? 'line-through text-gray-300' : 'text-[#827397]'}`}>{task.app}</span>
                 </div>
-
                 {isAdmin ? (
                   <div className="flex gap-1.5 flex-shrink-0 ml-2">
                     <button onClick={(e) => onToggleCancel(e, task.id)} className={`relative w-[26px] h-[26px] rounded-[8px] flex items-center justify-center transition-all active:scale-90 shadow-[0_2px_8px_rgba(238,213,248,0.5)] border-[2px] border-white/80 ${task.status === 'cancelled' ? 'bg-[#fffcf7]' : 'bg-white'}`} style={{ color: task.status === 'cancelled' ? '#a89cb5' : '#B0BEC5', borderColor: task.status === 'cancelled' ? '#eed5f8' : 'rgba(255,255,255,0.8)' }} title="ไม่ต่ออายุ">
@@ -296,10 +281,10 @@
       const year = currentMonth.getFullYear();
       const month = currentMonth.getMonth();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const firstDay = new Date(year, month, 1).getDay(); 
+      const firstDay = new Date(year, month, 1).getDay();
 
       const days = [];
-      for (let i = 0; i < firstDay; i++) days.push(null); 
+      for (let i = 0; i < firstDay; i++) days.push(null);
       for (let i = 1; i <= daysInMonth; i++) days.push(i);
 
       const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
@@ -311,37 +296,33 @@
             <h3 className="font-black text-[15px] text-[#827397] tracking-widest">{monthNames[month]} {year}</h3>
             <button onClick={() => setCurrentMonth(new Date(year, month + 1, 1))} className="p-1.5 hover:bg-[#fffcf7] rounded-full transition-colors text-[#a89cb5]"><IconChevronRight size={20}/></button>
           </div>
-          
           <div className="grid grid-cols-7 gap-1 text-center mb-3">
             {['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'].map(d => (
               <div key={d} className="text-[10px] font-black text-[#a89cb5] opacity-60 uppercase">{d}</div>
             ))}
           </div>
-          
           <div className="grid grid-cols-7 gap-y-3 gap-x-1 text-center">
             {days.map((day, index) => {
               if (!day) return <div key={`empty-${index}`} className="h-10"></div>;
-              
               const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
               const isSelected = selectedDate === dateStr;
               const isToday = today === dateStr;
-              const hasTasks = tasks.some(t => t.dueDate === dateStr); 
-
+              const hasTasks = tasks.some(t => t.dueDate === dateStr);
               return (
                 <div key={dateStr} className="flex justify-center items-center h-10">
-                  <div 
-                    onClick={() => setSelectedDate(dateStr)} 
+                  <div
+                    onClick={() => setSelectedDate(dateStr)}
                     className={`relative w-10 h-10 flex flex-col items-center justify-center cursor-pointer transition-all ${
-                      isSelected 
+                      isSelected
                         ? 'bg-[#ffb8e1] text-white rounded-full font-black shadow-md scale-105'
-                        : isToday 
+                        : isToday
                           ? 'text-[#827397] font-black bg-[#fffcf7] rounded-full border-[2px] border-[#ffb8e1]'
                           : 'text-[#a89cb5] font-bold hover:bg-[#fffcf7] hover:border-[2px] hover:border-white hover:shadow-sm rounded-full'
                     }`}
                   >
                     <span className="text-[13px] z-10 leading-none">{day}</span>
                     {hasTasks && (
-                      <div className="absolute bottom-1 w-1.5 h-1.5 rounded-full" style={{ backgroundColor: isSelected ? COLORS.white : COLORS.purpleDeep }}></div> 
+                      <div className="absolute bottom-1 w-1.5 h-1.5 rounded-full" style={{ backgroundColor: isSelected ? COLORS.white : COLORS.purpleDeep }}></div>
                     )}
                   </div>
                 </div>
@@ -352,17 +333,12 @@
       );
     });
 
-    // ==========================================
-    // 🏠 MAIN APP COMPONENT
-    // ==========================================
     function App() {
       const [tasks, setTasks] = useState([]);
-      const [appTypes, setAppTypes] = useState([]); 
-      const [channels, setChannels] = useState([]); 
-      
+      const [appTypes, setAppTypes] = useState([]);
+      const [channels, setChannels] = useState([]);
       const [isLoading, setIsLoading] = useState(true);
-      const [isSaving, setIsSaving] = useState(false); 
-      
+      const [isSaving, setIsSaving] = useState(false);
       const [view, setView] = useState('dashboard');
       const [isCalendarView, setIsCalendarView] = useState(false);
       const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -370,37 +346,30 @@
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       });
-      
-      const [showModal, setShowModal] = useState(false);     
-      const [editingTask, setEditingTask] = useState(null);  
+      const [showModal, setShowModal] = useState(false);
+      const [editingTask, setEditingTask] = useState(null);
       const [taskToDelete, setTaskToDelete] = useState(null);
-      const [showAuthModal, setShowAuthModal] = useState(false);   
-      const [showBannerModal, setShowBannerModal] = useState(false); 
+      const [showAuthModal, setShowAuthModal] = useState(false);
+      const [showBannerModal, setShowBannerModal] = useState(false);
       const [showImageModal, setShowImageModal] = useState(false);
-      const [showDaysModal, setShowDaysModal] = useState(false); 
-      
+      const [showDaysModal, setShowDaysModal] = useState(false);
       const [showRenewModal, setShowRenewModal] = useState(false);
       const [renewingTask, setRenewingTask] = useState(null);
       const [newDueDate, setNewDueDate] = useState('');
-      
       const [searchQuery, setSearchQuery] = useState('');
       const [filterType, setFilterType] = useState('all');
-      const [todayFilter, setTodayFilter] = useState('all'); 
-      
+      const [todayFilter, setTodayFilter] = useState('all');
       const [isAdmin, setIsAdmin] = useState(false);
       const [password, setPassword] = useState('');
-      
       const [profileImage, setProfileImage] = useState(null);
-      const [bannerImage, setBannerImage] = useState(null);   
+      const [bannerImage, setBannerImage] = useState(null);
       const [isBannerVisible, setIsBannerVisible] = useState(true);
       const [tempImageUrl, setTempImageUrl] = useState('');
-      
-      const [checkDays, setCheckDays] = useState(3); 
-      const [tempDays, setTempDays] = useState(3); 
-      const [isViewingAdvance, setIsViewingAdvance] = useState(false); 
-      const [isBouncing, setIsBouncing] = useState(false); 
+      const [checkDays, setCheckDays] = useState(3);
+      const [tempDays, setTempDays] = useState(3);
+      const [isViewingAdvance, setIsViewingAdvance] = useState(false);
+      const [isBouncing, setIsBouncing] = useState(false);
 
-      // 📥 โหลดข้อมูลจาก Google Sheet
       const loadData = async () => {
         try {
           const res = await fetch(WEB_APP_URL + "?action=getInitialData");
@@ -421,7 +390,7 @@
       };
 
       useEffect(() => {
-        document.title = "LILAC CHECK Q"; 
+        document.title = "LILAC CHECK Q";
         loadData();
       }, []);
 
@@ -451,7 +420,7 @@
       const todayStr = useMemo(() => {
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-      }, []); 
+      }, []);
 
       const overdueTasks = useMemo(() => {
         const tObj = new Date(); tObj.setHours(0,0,0,0);
@@ -484,7 +453,6 @@
         e.stopPropagation();
         const task = tasks.find(t => t.id === id);
         const newStatus = task.status === 'cancelled' ? 'todo' : 'cancelled';
-        
         setTasks(prev => prev.map(t => t.id === id ? { ...t, status: newStatus } : t));
         fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'updateTaskStatus', taskId: id, newStatus: newStatus }) });
       }, [tasks]);
@@ -493,7 +461,6 @@
         e.stopPropagation();
         const task = tasks.find(t => t.id === id);
         const newStatus = task.status === 'doing' ? 'todo' : 'doing';
-        
         setTasks(prev => prev.map(t => t.id === id ? { ...t, status: newStatus } : t));
         fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'updateTaskStatus', taskId: id, newStatus: newStatus }) });
       }, [tasks]);
@@ -502,9 +469,8 @@
         e.stopPropagation();
         if (task.status !== 'done') {
            setRenewingTask(task);
-           let currentDue = new Date(); 
+           let currentDue = new Date();
            if(task.dueDate) currentDue = new Date(task.dueDate);
-           
            currentDue.setMonth(currentDue.getMonth() + 1);
            const nextMonthStr = `${currentDue.getFullYear()}-${String(currentDue.getMonth() + 1).padStart(2, '0')}-${String(currentDue.getDate()).padStart(2, '0')}`;
            setNewDueDate(nextMonthStr);
@@ -518,12 +484,10 @@
 
       const handleRenewSubmit = async () => {
         setIsSaving(true);
-        const updatedTask = { ...renewingTask, dueDate: newDueDate, status: 'done' }; 
-        
+        const updatedTask = { ...renewingTask, dueDate: newDueDate, status: 'done' };
         setTasks(prev => prev.map(t => t.id === updatedTask.id ? updatedTask : t));
         setShowRenewModal(false);
         setRenewingTask(null);
-        
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'saveOrUpdateTask', task: updatedTask }) });
         setIsSaving(false);
       };
@@ -537,19 +501,17 @@
         e.preventDefault();
         setIsSaving(true);
         const formData = new FormData(e.target);
-        
         const taskData = {
           id: editingTask ? editingTask.id : Date.now(),
           client: formData.get('client'),
           email: formData.get('email'),
           emailType: formData.get('emailType'),
-          app: formData.get('app'), 
+          app: formData.get('app'),
           channel: formData.get('channel'),
           dueDate: formData.get('dueDate'),
           details: formData.get('details'),
           status: editingTask ? editingTask.status : 'todo'
         };
-
         try {
            await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'saveOrUpdateTask', task: taskData }) });
            setTasks(prev => editingTask ? prev.map(t => t.id === taskData.id ? taskData : t) : [...prev, taskData]);
@@ -563,7 +525,6 @@
       const executeDeleteTask = async () => {
         if (!taskToDelete) return;
         setIsSaving(true);
-        
         try {
             await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteTask', taskId: taskToDelete }) });
             setTasks(prev => prev.filter(t => t.id !== taskToDelete));
@@ -578,23 +539,23 @@
          setIsBannerVisible(visible);
          fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'saveBannerVisibility', isVisible: visible }) });
       };
-      
+
       const triggerBounce = useCallback(() => { setIsBouncing(true); setTimeout(() => setIsBouncing(false), 500); }, []);
-      
-      const handleImageUpload = useCallback(() => { 
+
+      const handleImageUpload = useCallback(() => {
          setTempImageUrl(profileImage || "");
-         setShowImageModal(true); 
+         setShowImageModal(true);
       }, [profileImage]);
 
-      const handleBannerUpload = useCallback(() => { 
+      const handleBannerUpload = useCallback(() => {
          setTempImageUrl(bannerImage || "");
-         setShowBannerModal(true); 
+         setShowBannerModal(true);
       }, [bannerImage]);
 
       const handleDaysSubmit = () => {
         setCheckDays(Number(tempDays));
         setShowDaysModal(false);
-        setIsViewingAdvance(true); 
+        setIsViewingAdvance(true);
       };
 
       const filteredAllTasks = useMemo(() => tasks.filter(t => {
@@ -602,29 +563,22 @@
         const appStr = (t.app || "").toLowerCase();
         const emailStr = (t.email || "").toLowerCase();
         const queryStr = (searchQuery || "").toLowerCase();
-        
         const matchSearch = clientStr.includes(queryStr) || appStr.includes(queryStr) || emailStr.includes(queryStr);
-        
         const todayObj = new Date(); todayObj.setHours(0,0,0,0);
-        const dueObj = t.dueDate ? new Date(t.dueDate) : new Date(); 
+        const dueObj = t.dueDate ? new Date(t.dueDate) : new Date();
         dueObj.setHours(0,0,0,0);
-
         let matchFilter = false;
         if (filterType === 'all') matchFilter = true;
         else if (filterType === 'done') matchFilter = t.status === 'done';
         else if (filterType === 'doing') matchFilter = t.status === 'doing';
         else if (filterType === 'overdue') matchFilter = (dueObj < todayObj && t.status !== 'done' && t.status !== 'cancelled');
-
         return matchSearch && matchFilter;
       }), [tasks, searchQuery, filterType]);
 
-      const displayedTasks = isCalendarView 
-        ? filteredAllTasks.filter(t => t.dueDate === selectedDate) 
+      const displayedTasks = isCalendarView
+        ? filteredAllTasks.filter(t => t.dueDate === selectedDate)
         : filteredAllTasks;
 
-      // ==========================================
-      // 🔄 Loading Screen
-      // ==========================================
       if (isLoading) {
         return (
           <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden" style={{ backgroundColor: COLORS.bg }}>
@@ -643,16 +597,12 @@
         );
       }
 
-      // ==========================================
-      // 🎨 MAIN RENDER
-      // ==========================================
       return (
         <div className="min-h-screen font-sans relative" style={{ backgroundColor: COLORS.bg, color: COLORS.textMain }}>
           <DynamicBackground />
           <div className="max-w-md mx-auto min-h-screen relative pb-28">
             <Header isAdmin={isAdmin} setIsAdmin={setIsAdmin} setShowAuthModal={setShowAuthModal} handleImageUpload={handleImageUpload} profileImage={profileImage} />
-            
-            {/* ===== Banner Section ===== */}
+
             <div className="px-5 relative z-10 mb-4">
                {bannerImage && isBannerVisible && (
                  <div className="relative group w-full h-32 rounded-[24px] overflow-hidden shadow-sm border-[3px] border-white bg-white/40 backdrop-blur-sm">
@@ -663,7 +613,6 @@
                     </div>
                  </div>
                )}
-
                {bannerImage && !isBannerVisible && isAdmin && (
                  <div className="flex justify-end mb-1">
                     <button onClick={() => toggleBannerVisibility(true)} className="text-[10px] font-bold flex items-center gap-1 bg-white/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white shadow-sm hover:bg-white transition-colors" style={{ color: COLORS.textSoft }}>
@@ -671,21 +620,16 @@
                     </button>
                  </div>
                )}
-
                {!bannerImage && isAdmin && (
                  <div onClick={handleBannerUpload} className="w-full h-16 rounded-[24px] border-[3px] border-dashed border-white bg-white/40 backdrop-blur-sm flex items-center justify-center cursor-pointer hover:bg-white/60 transition-colors">
                     <span className="text-[11px] font-bold flex items-center gap-2" style={{ color: COLORS.textSoft }}><IconPlus size={16}/> เพิ่มรูปแบนเนอร์ร้าน</span>
                  </div>
                )}
             </div>
-            
-            {/* ===== Main Content ===== */}
+
             <div className="px-5 relative z-10">
-              {/* ===== VIEW: Dashboard ===== */}
               {view === 'dashboard' ? (
                 <div className="animate-fadeIn">
-                  
-                  {/* Cards Section */}
                   <div className="flex gap-3 h-[100px] mb-5">
                     <div className="flex-[2]">
                       <CheckDateCard checkDays={checkDays} dueInXTasksLength={dueInXTasks.length} onOpenDaysModal={() => { setTempDays(checkDays); setShowDaysModal(true); }} onCardClick={() => setIsViewingAdvance(true)} isActive={isViewingAdvance} />
@@ -694,8 +638,7 @@
                       <OverdueCard overdueTasksLength={overdueTasks.length} triggerBounce={triggerBounce} isBouncing={isBouncing} />
                     </div>
                   </div>
-                  
-                  {/* Title & Dropdown Filter */}
+
                   <div className="flex items-start justify-between mb-2.5 ml-1">
                     <div className="flex flex-col">
                       <h2 className="text-[11px] font-black text-[#827397] uppercase tracking-[0.1em] mt-1">
@@ -714,7 +657,6 @@
                     </select>
                   </div>
 
-                  {/* List Rendering */}
                   <div className="space-y-1">
                     {currentDashboardTasks.length > 0 ? currentDashboardTasks.map(t => <TaskCard key={t.id} task={t} isAdmin={isAdmin} onEdit={handleEditTask} onToggleDoing={toggleDoing} onToggleStatus={toggleStatus} onToggleCancel={toggleCancel} />) : (
                       <div className="text-center py-10 bg-white/30 rounded-[28px] border-[4px] border-dashed border-white shadow-sm mt-2">
@@ -726,14 +668,12 @@
                   </div>
                 </div>
               ) : (
-                /* ===== VIEW: All Tasks ===== */
                 <div className="animate-fadeIn">
                   <div className="relative mb-4">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 opacity-50" style={{ color: COLORS.blueDeep }}><IconSearch size={16} /></div>
                     <input type="text" placeholder="ค้นหารายการ, ชื่อแอป, หรืออีเมล..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-white/80 border-2 rounded-[22px] py-3 pl-10 pr-4 outline-none text-xs shadow-lg shadow-[#eed5f8]/30 focus:border-[#ffb8e1] transition-all backdrop-blur-sm" style={{ borderColor: COLORS.blue }} />
                   </div>
-                  
-                  {/* ปุ่ม Filter */}
+
                   <div className="flex gap-1 mb-3 bg-white/50 p-1.5 rounded-full backdrop-blur-md border-[3px] border-white shadow-sm overflow-x-auto scrollbar-hide">
                       <button onClick={() => setFilterType('all')} className={`flex-1 whitespace-nowrap px-2 text-[9px] font-black py-2 rounded-full transition-all tracking-wider ${filterType === 'all' ? 'bg-white shadow-sm' : 'text-gray-400 hover:bg-white/30'}`} style={{ color: filterType === 'all' ? COLORS.pinkDeep : '' }}>ทั้งหมด</button>
                       <button onClick={() => setFilterType('done')} className={`flex-1 whitespace-nowrap px-2 text-[9px] font-black py-2 rounded-full transition-all tracking-wider ${filterType === 'done' ? 'bg-white shadow-sm' : 'text-gray-400 hover:bg-white/30'}`} style={{ color: filterType === 'done' ? COLORS.blueDeep : '' }}>ต่ออายุแล้ว</button>
@@ -742,10 +682,10 @@
                   </div>
 
                   <div className="flex justify-end mb-4 pr-1">
-                    <button onClick={() => { 
+                    <button onClick={() => {
                       const newView = !isCalendarView;
-                      setIsCalendarView(newView); 
-                      if(newView) setFilterType('all'); 
+                      setIsCalendarView(newView);
+                      if(newView) setFilterType('all');
                     }} className="flex items-center gap-1.5 px-3 py-1.5 bg-white/80 backdrop-blur-md rounded-full shadow-[0_4px_10px_rgba(238,213,248,0.5)] border-[2px] border-white text-[9px] font-black uppercase tracking-widest hover:text-[#ffb8e1] transition-all active:scale-95" style={{ color: COLORS.textSoft }}>
                       {isCalendarView ? <><IconList size={14} /> รูปแบบรายการ</> : <><IconCalendar size={14} /> รูปแบบปฏิทิน</>}
                     </button>
@@ -766,13 +706,11 @@
               )}
             </div>
 
-            {/* ===== Bottom Navigation Bar ===== */}
             <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-[210px] z-50">
               <div className="bg-white/60 backdrop-blur-xl rounded-full h-14 shadow-2xl shadow-[#eed5f8]/30 border border-white flex items-center justify-between px-6 relative">
                   <button onClick={() => setView('dashboard')} className={`p-1 transition-all ${view === 'dashboard' ? 'scale-110' : 'text-gray-300 opacity-60'}`} style={{ color: view === 'dashboard' ? COLORS.pinkDeep : '' }}><IconHome size={22} /></button>
                   <div className="w-8"></div>
                   <button onClick={() => setView('all')} className={`p-1 transition-all ${view === 'all' ? 'scale-110' : 'text-gray-300 opacity-60'}`} style={{ color: view === 'all' ? COLORS.blueDeep : '' }}><IconFileText size={22} /></button>
-                  
                   {isAdmin && (
                     <div className="absolute left-1/2 -translate-x-1/2 -top-6">
                       <button onClick={() => { setEditingTask(null); setShowModal(true); }} className="w-14 h-14 rounded-full text-white flex items-center justify-center shadow-xl shadow-[#ffb8e1]/50 active:scale-90 transition-transform border-[4px] border-white" style={{ background: `linear-gradient(to bottom right, #ffb8e1, #e3a1c0)` }}>
@@ -783,22 +721,11 @@
               </div>
             </div>
 
-            {/* ==========================================
-                🪟 MODALS ALL
-                ========================================== */}
-            
-            {/* 1. Modal: กรอกจำนวนวันล่วงหน้า */}
             {showDaysModal && (
               <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-black/20 backdrop-blur-[2px] animate-fadeIn">
                 <div className="bg-white/95 backdrop-blur-xl w-full max-w-[260px] rounded-[30px] p-6 shadow-2xl border border-white animate-slideUp text-center">
                   <h3 className="text-[14px] font-black mb-4 text-[#827397]">ตรวจสอบล่วงหน้า (วัน)</h3>
-                  <input 
-                    type="number" 
-                    min="0" 
-                    value={tempDays} 
-                    onChange={e => setTempDays(e.target.value)} 
-                    className="w-full text-center text-3xl font-black p-3 bg-white rounded-2xl border-2 border-[#eed5f8] outline-none focus:border-[#ffb8e1] text-[#ffb8e1] mb-5 shadow-inner" 
-                  />
+                  <input type="number" min="0" value={tempDays} onChange={e => setTempDays(e.target.value)} className="w-full text-center text-3xl font-black p-3 bg-white rounded-2xl border-2 border-[#eed5f8] outline-none focus:border-[#ffb8e1] text-[#ffb8e1] mb-5 shadow-inner" />
                   <div className="flex gap-2">
                     <button onClick={() => setShowDaysModal(false)} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-gray-500 bg-gray-100 active:scale-95 transition-all">ยกเลิก</button>
                     <button onClick={handleDaysSubmit} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-white bg-[#ffb8e1] hover:bg-[#e3a1c0] active:scale-95 transition-all shadow-md">ตกลง</button>
@@ -807,7 +734,6 @@
               </div>
             )}
 
-            {/* 2. Modal: เพิ่ม/แก้ไขรายการ */}
             {showModal && (
               <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/10 backdrop-blur-[2px] animate-fadeIn">
                 <form onSubmit={handleSaveTask} className="bg-white/95 backdrop-blur-xl w-full max-w-xs rounded-[35px] p-6 shadow-2xl border border-white animate-slideUp">
@@ -819,7 +745,6 @@
                            <span className="text-[10px] font-black mt-2 text-gray-500">กำลังบันทึก...</span>
                         </div>
                      )}
-                     
                      <div className="flex gap-2 mb-2">
                          <label className="flex-1 flex items-center justify-center gap-2 bg-white px-3 py-2 rounded-xl border border-gray-100 cursor-pointer shadow-sm hover:bg-gray-50 transition-colors">
                              <input type="radio" name="emailType" value="shop" defaultChecked={editingTask?.emailType !== 'customer'} className="accent-[#ffb8e1] w-3 h-3" />
@@ -830,27 +755,21 @@
                              <span className="text-[10px] font-bold text-gray-600">เมลลูกค้า</span>
                          </label>
                      </div>
-
                      <div className="flex gap-2">
                        <input name="client" required defaultValue={editingTask?.client || ''} className="w-1/2 p-3.5 rounded-2xl bg-white border border-gray-100 outline-none text-[11px] shadow-sm focus:border-[#fffcf7] transition-all" placeholder="ชื่อลูกค้า" />
                        <input list="channelsList" name="channel" required defaultValue={editingTask?.channel || ''} className="w-1/2 p-3.5 rounded-2xl font-black text-[10px] outline-none border border-gray-100 shadow-sm" placeholder="ช่องทาง (เช่น LINE)" />
                        <datalist id="channelsList">{channels.map(ch => <option key={ch} value={ch} />)}</datalist>
                      </div>
-
                      <input name="email" type="email" required defaultValue={editingTask?.email || ''} className="w-full p-3.5 rounded-2xl bg-white border border-gray-100 outline-none text-[11px] shadow-sm focus:border-[#fffcf7] transition-all" placeholder="อีเมลที่ใช้งาน" />
-
                      <input list="appTypesList" name="app" required defaultValue={editingTask?.app || ''} className="w-full p-3.5 rounded-2xl font-black text-[10px] outline-none border border-gray-100 shadow-sm" placeholder="แอปที่ต่ออายุ (เช่น Netflix)" />
                      <datalist id="appTypesList">{appTypes.map(type => <option key={type} value={type} />)}</datalist>
-
                      <textarea name="details" rows="2" defaultValue={editingTask?.details || ''} className="w-full p-3.5 rounded-2xl bg-white border border-gray-100 outline-none text-[11px] shadow-sm focus:border-[#fffcf7] transition-all resize-none" placeholder="รายละเอียดแพ็กเกจ/อื่นๆ..."></textarea>
-                     
                      <div className="flex items-center justify-between bg-[#fffcf7]/30 p-1.5 pl-4 rounded-2xl border border-[#eed5f8]/50 transition-all hover:bg-[#fffcf7]/80 hover:shadow-sm group mt-1">
                        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-black" style={{ color: COLORS.pinkDeep }}>
                          <IconCalendar size={12} className="group-hover:animate-bounce-slow transition-transform" /><span>ต่ออายุรอบถัดไป</span>
                        </div>
                        <input name="dueDate" type="date" required defaultValue={editingTask?.dueDate || ''} className="w-32 p-2.5 rounded-xl bg-white border border-[#eed5f8] outline-none text-[10px] font-black text-[#ffb8e1] shadow-sm focus:border-[#ffb8e1] focus:ring-2 focus:ring-[#ffb8e1]/50 transition-all cursor-pointer active:scale-95 hover:border-[#ffb8e1]" />
                      </div>
-                     
                      <div className="flex items-center gap-2 mt-3">
                        <button type="submit" className="flex-1 py-3.5 rounded-2xl font-black text-xs text-white shadow-lg active:scale-95 transition-all disabled:opacity-50" style={{ backgroundColor: COLORS.pinkDeep }}>บันทึกรายการใหม่</button>
                        {editingTask && (
@@ -865,7 +784,6 @@
               </div>
             )}
 
-            {/* 3. Modal: Login Admin */}
             {showAuthModal && (
               <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/10 backdrop-blur-[2px] animate-fadeIn">
                 <form onSubmit={handleAdminLogin} className="bg-white/95 backdrop-blur-xl w-full max-w-xs rounded-[35px] p-6 shadow-2xl border border-white animate-slideUp text-center">
@@ -879,7 +797,6 @@
               </div>
             )}
 
-            {/* 4. Modal: ยืนยันการลบ */}
             {taskToDelete && (
               <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/20 backdrop-blur-[2px] animate-fadeIn">
                 <div className="bg-white/95 backdrop-blur-xl w-full max-w-[260px] rounded-[30px] p-6 shadow-2xl border border-white animate-slideUp text-center">
@@ -894,7 +811,6 @@
               </div>
             )}
 
-            {/* 5. Modal: ต่ออายุ */}
             {showRenewModal && (
               <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/20 backdrop-blur-[2px] animate-fadeIn">
                 <div className="bg-white/95 backdrop-blur-xl w-[90%] max-w-[280px] rounded-[30px] p-6 shadow-2xl border border-white animate-slideUp text-center box-border">
@@ -903,17 +819,9 @@
                   </div>
                   <h3 className="text-[14px] font-black mb-1 text-[#827397]">ต่ออายุรายการ ✨</h3>
                   <p className="text-[10px] font-bold text-[#a89cb5] mb-4">กำหนดวันชำระรอบถัดไป</p>
-                  
                   <div className="w-full flex items-center overflow-hidden bg-white rounded-2xl border-2 border-[#eed5f8] mb-5 shadow-inner focus-within:border-[#ffb8e1] transition-all box-border">
-                    <input 
-                      type="date" 
-                      value={newDueDate} 
-                      onChange={e => setNewDueDate(e.target.value)} 
-                      className="w-full bg-transparent text-center p-3 outline-none text-[#827397] text-[13px] font-bold cursor-pointer font-sans appearance-none min-w-0 box-border" 
-                      style={{ maxWidth: '100%', WebkitAppearance: 'none' }}
-                    />
+                    <input type="date" value={newDueDate} onChange={e => setNewDueDate(e.target.value)} className="w-full bg-transparent text-center p-3 outline-none text-[#827397] text-[13px] font-bold cursor-pointer font-sans appearance-none min-w-0 box-border" style={{ maxWidth: '100%', WebkitAppearance: 'none' }} />
                   </div>
-                  
                   <div className="flex gap-2">
                     <button onClick={() => setShowRenewModal(false)} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-gray-500 bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all">ยกเลิก</button>
                     <button onClick={handleRenewSubmit} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-white bg-[#ffb8e1] hover:bg-[#e3a1c0] active:scale-95 transition-all shadow-md">
@@ -924,23 +832,14 @@
               </div>
             )}
 
-            {/* 6. Modal: อัปโหลดรูปโปรไฟล์ */}
             {showImageModal && (
               <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/20 backdrop-blur-[2px] animate-fadeIn">
                 <div className="bg-white/95 backdrop-blur-xl w-[90%] max-w-[280px] rounded-[30px] p-6 shadow-2xl border border-white animate-slideUp text-center box-border">
                   <h3 className="text-[14px] font-black mb-1 text-[#827397]">เปลี่ยนรูปโปรไฟล์ 🐰</h3>
                   <p className="text-[10px] font-bold text-[#a89cb5] mb-4">วางลิงก์รูปภาพ หรือ Google Drive</p>
-                  
                   <div className="w-full flex items-center overflow-hidden bg-white rounded-2xl border-2 border-[#eed5f8] mb-5 shadow-inner focus-within:border-[#ffb8e1] transition-all box-border">
-                    <input 
-                      type="text" 
-                      value={tempImageUrl} 
-                      onChange={e => setTempImageUrl(e.target.value)} 
-                      className="w-full bg-transparent text-center p-3 outline-none text-[#827397] text-[11px] font-bold font-sans appearance-none min-w-0 box-border" 
-                      placeholder="https://..."
-                    />
+                    <input type="text" value={tempImageUrl} onChange={e => setTempImageUrl(e.target.value)} className="w-full bg-transparent text-center p-3 outline-none text-[#827397] text-[11px] font-bold font-sans appearance-none min-w-0 box-border" placeholder="https://..." />
                   </div>
-                  
                   <div className="flex gap-2">
                     <button onClick={() => {setShowImageModal(false); setTempImageUrl('');}} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-gray-500 bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all">ยกเลิก</button>
                     <button onClick={async () => {
@@ -963,23 +862,14 @@
               </div>
             )}
 
-            {/* 7. Modal: อัปโหลดรูปแบนเนอร์ */}
             {showBannerModal && (
               <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/20 backdrop-blur-[2px] animate-fadeIn">
                 <div className="bg-white/95 backdrop-blur-xl w-[90%] max-w-[280px] rounded-[30px] p-6 shadow-2xl border border-white animate-slideUp text-center box-border">
                   <h3 className="text-[14px] font-black mb-1 text-[#827397]">เปลี่ยนรูปแบนเนอร์ 🖼️</h3>
                   <p className="text-[10px] font-bold text-[#a89cb5] mb-4">วางลิงก์รูปภาพ หรือ Google Drive</p>
-                  
                   <div className="w-full flex items-center overflow-hidden bg-white rounded-2xl border-2 border-[#eed5f8] mb-5 shadow-inner focus-within:border-[#ffb8e1] transition-all box-border">
-                    <input 
-                      type="text" 
-                      value={tempImageUrl} 
-                      onChange={e => setTempImageUrl(e.target.value)} 
-                      className="w-full bg-transparent text-center p-3 outline-none text-[#827397] text-[11px] font-bold font-sans appearance-none min-w-0 box-border" 
-                      placeholder="https://..."
-                    />
+                    <input type="text" value={tempImageUrl} onChange={e => setTempImageUrl(e.target.value)} className="w-full bg-transparent text-center p-3 outline-none text-[#827397] text-[11px] font-bold font-sans appearance-none min-w-0 box-border" placeholder="https://..." />
                   </div>
-                  
                   <div className="flex gap-2">
                     <button onClick={() => {setShowBannerModal(false); setTempImageUrl('');}} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-gray-500 bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all">ยกเลิก</button>
                     <button onClick={async () => {
@@ -1003,7 +893,7 @@
             )}
 
           </div>
-          
+
           <style>{`
             @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(25px, -15px); } }
             @keyframes float-reverse { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-25px, 15px); } }
@@ -1014,7 +904,7 @@
             @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
             @keyframes text-wave { 0%, 20%, 100% { transform: translateY(0px); } 10% { transform: translateY(-5px); } }
             @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-            
+
             .animate-text-wave { animation: text-wave 4s ease-in-out infinite; }
             .animate-breathe { animation: breathe 4s ease-in-out infinite; transform-origin: center; }
             .animate-float { animation: float 15s ease-in-out infinite; }
@@ -1024,8 +914,7 @@
             .animate-slideUp { animation: slideUp 0.3s ease-out; }
             .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
             .animate-spin-slow { animation: spin-slow 4s linear infinite; }
-            
-            /* Hide scrollbar */
+
             .scrollbar-hide::-webkit-scrollbar { display: none; }
             .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
           `}</style>
