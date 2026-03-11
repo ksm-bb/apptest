@@ -110,19 +110,18 @@
           <div className="flex flex-col justify-center ml-2 relative z-10">
             <div className="flex items-center gap-1.5 pb-1">
               
-              {/* ✨ คืนชีพแอนิเมชันให้หัวเว็บ เปลี่ยนเป็น CoolKiz และแก้บัคตัดขอบด้วย py-1 */}
-               <h1 className="text-2xl font-black italic tracking-tighter flex">
-  {/* ✏️ [แก้ได้] เปลี่ยนชื่อแอปที่นี่ */}
-  {"Coolkiz".split('').map((char, index) => (
-    <span 
-      key={index} 
-      className={`bg-gradient-to-br from-[#827397] to-[#a38ab5] bg-clip-text text-transparent drop-shadow-sm inline-block animate-text-wave pb-2 ${char === ' ' ? 'w-2.5' : 'pr-[1.5px]'}`} 
-      style={{ animationDelay: `${index * 0.1}s` }}
-    >
-      {char}
-    </span>
-  ))}
-</h1>
+              {/* ✨ เปลี่ยนเป็น CoolKiz ใช้สี Solid และ px-[1px] เพื่อป้องกันการตัดหัวตัวอักษร */}
+              <h1 className="text-2xl font-black italic tracking-tighter flex items-center text-[#827397] pt-1">
+                {"CoolKiz".split('').map((char, index) => (
+                  <span 
+                    key={index} 
+                    className="inline-block animate-text-wave px-[1px]" 
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    {char}
+                  </span>
+                ))}
+              </h1>
 
               <button onClick={() => isAdmin ? setIsAdmin(false) : setShowAuthModal(true)} className={`px-1.5 py-0.5 ml-1 rounded-full text-[7px] font-black uppercase tracking-widest border shadow-sm transition-all active:scale-95 ${isAdmin ? 'bg-white/60 text-[#827397] border-[#b5a8c2]' : 'bg-gray-100/80 text-gray-400 border-gray-200'}`}>
                 {isAdmin ? 'Admin' : 'Guest'}
@@ -197,7 +196,7 @@
       due.setHours(0,0,0,0);
       const daysDiff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
 
-      // ✨ แก้ไขป้ายแจ้งเตือนตามเงื่อนไขที่ 3
+      // ✨ ปรับแก้ข้อความถึงกำหนดชำระ
       let statusBadge = null;
       if (task.status === 'done') {
           statusBadge = <span className="text-[9px] font-bold bg-gray-50 text-gray-400 px-2 py-0.5 rounded-full border border-gray-100">ต่ออายุแล้ว</span>;
@@ -400,7 +399,6 @@
       const [isViewingAdvance, setIsViewingAdvance] = useState(false); 
       const [isBouncing, setIsBouncing] = useState(false); 
 
-      // 📥 โหลดข้อมูลจาก Google Sheet
       const loadData = async () => {
         try {
           const res = await fetch(WEB_APP_URL + "?action=getInitialData");
@@ -515,7 +513,6 @@
 
       const handleRenewSubmit = async () => {
         setIsSaving(true);
-        // ✨ แก้ไข 2: เปลี่ยนสถานะเป็น done เมื่อกดยืนยันต่ออายุ
         const updatedTask = { ...renewingTask, dueDate: newDueDate, status: 'done' }; 
         
         setTasks(prev => prev.map(t => t.id === updatedTask.id ? updatedTask : t));
@@ -962,4 +959,3 @@
   </script>
 </body>
 </html>
-
