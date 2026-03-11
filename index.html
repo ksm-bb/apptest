@@ -100,14 +100,14 @@
     // 3. h1 + span: เพิ่ม willChange, WebkitTransform เพื่อ force GPU layer
     const Header = React.memo(({ isAdmin, setIsAdmin, setShowAuthModal, handleImageUpload, profileImage }) => (
       <div className="px-5 pt-6 pb-2 relative z-10">
-        <div className="bg-white/40 backdrop-blur-md rounded-[32px] p-4 shadow-xl shadow-[#e9f4fa]/50 border border-white/50 flex items-center justify-between h-20 relative overflow-visible group">
+        <div className="bg-white/40 backdrop-blur-md rounded-[32px] px-4 pt-5 pb-4 shadow-xl shadow-[#e9f4fa]/50 border border-white/50 flex items-center justify-between relative overflow-hidden group" style={{ minHeight: '88px' }}>
           <div className="absolute left-6 top-1/2 -translate-y-1/2 w-24 h-8 bg-[#fdd9ef]/60 blur-xl rounded-full pointer-events-none"></div>
-          <div className="flex flex-col justify-center ml-2 relative z-10 py-1 overflow-visible">
+          <div className="flex flex-col justify-center ml-2 relative z-10">
             <div className="flex items-center gap-1.5 pb-1">
 
               <h1
-                className="text-2xl font-black italic tracking-tighter flex items-center text-[#827397] pt-1"
-                style={{ overflow: 'visible', WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)' }}
+                className="text-2xl font-black italic tracking-tighter flex items-center text-[#827397]"
+                style={{ lineHeight: '1.4', paddingTop: '6px', paddingBottom: '6px' }}
               >
                 {"CoolKiz".split('').map((char, index) => (
                   <span
@@ -902,7 +902,7 @@
             @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
             @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
             @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-            @keyframes text-wave { 0%, 20%, 100% { transform: translateY(0px); } 10% { transform: translateY(-5px); } }
+            @keyframes text-wave { 0%, 20%, 100% { transform: translateY(0px); } 10% { transform: translateY(-3px); } }
             @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
             .animate-text-wave { animation: text-wave 4s ease-in-out infinite; }
