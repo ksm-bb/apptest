@@ -110,7 +110,6 @@
           <div className="flex flex-col justify-center ml-2 relative z-10">
             <div className="flex items-center gap-1.5 pb-1">
               
-              {/* ✨ เปลี่ยนเป็น CoolKiz ใช้สี Solid และ px-[1px] เพื่อป้องกันการตัดหัวตัวอักษร */}
               <h1 className="text-2xl font-black italic tracking-tighter flex items-center text-[#827397] pt-1">
                 {"CoolKiz".split('').map((char, index) => (
                   <span 
@@ -196,7 +195,7 @@
       due.setHours(0,0,0,0);
       const daysDiff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
 
-      // ✨ ปรับแก้ข้อความถึงกำหนดชำระ
+      // กำหนด Badge สีและข้อความตามสถานะ
       let statusBadge = null;
       if (task.status === 'done') {
           statusBadge = <span className="text-[9px] font-bold bg-gray-50 text-gray-400 px-2 py-0.5 rounded-full border border-gray-100">ต่ออายุแล้ว</span>;
@@ -377,6 +376,7 @@
       const [taskToDelete, setTaskToDelete] = useState(null);
       const [showAuthModal, setShowAuthModal] = useState(false);   
       const [showBannerModal, setShowBannerModal] = useState(false); 
+      const [showImageModal, setShowImageModal] = useState(false);
       const [showDaysModal, setShowDaysModal] = useState(false); 
       
       const [showRenewModal, setShowRenewModal] = useState(false);
@@ -393,12 +393,14 @@
       const [profileImage, setProfileImage] = useState(null);
       const [bannerImage, setBannerImage] = useState(null);   
       const [isBannerVisible, setIsBannerVisible] = useState(true);
+      const [tempImageUrl, setTempImageUrl] = useState('');
       
       const [checkDays, setCheckDays] = useState(3); 
       const [tempDays, setTempDays] = useState(3); 
       const [isViewingAdvance, setIsViewingAdvance] = useState(false); 
       const [isBouncing, setIsBouncing] = useState(false); 
 
+      // 📥 โหลดข้อมูลจาก Google Sheet
       const loadData = async () => {
         try {
           const res = await fetch(WEB_APP_URL + "?action=getInitialData");
@@ -425,6 +427,7 @@
 
       const handleAdminLogin = async (e) => {
         e.preventDefault();
+        setIsSaving(true);
         try {
            const res = await fetch(WEB_APP_URL, {
                method: 'POST',
@@ -440,6 +443,8 @@
            }
         } catch (e) {
            alert("เกิดข้อผิดพลาดในการตรวจสอบรหัสผ่าน");
+        } finally {
+           setIsSaving(false);
         }
       };
 
@@ -577,19 +582,13 @@
       const triggerBounce = useCallback(() => { setIsBouncing(true); setTimeout(() => setIsBouncing(false), 500); }, []);
       
       const handleImageUpload = useCallback(() => { 
-         const newUrl = prompt("ใส่ลิงก์รูปโปรไฟล์ใหม่ (URL):", profileImage || "");
-         if(newUrl !== null) {
-             setProfileImage(newUrl);
-             fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'saveProfileImage', imageUrl: newUrl }) });
-         }
+         setTempImageUrl(profileImage || "");
+         setShowImageModal(true); 
       }, [profileImage]);
 
       const handleBannerUpload = useCallback(() => { 
-         const newUrl = prompt("ใส่ลิงก์รูปแบนเนอร์ใหม่ (URL):", bannerImage || "");
-         if(newUrl !== null) {
-             setBannerImage(newUrl);
-             fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'saveBannerImage', imageUrl: newUrl }) });
-         }
+         setTempImageUrl(bannerImage || "");
+         setShowBannerModal(true); 
       }, [bannerImage]);
 
       const handleDaysSubmit = () => {
@@ -872,7 +871,9 @@
                 <form onSubmit={handleAdminLogin} className="bg-white/95 backdrop-blur-xl w-full max-w-xs rounded-[35px] p-6 shadow-2xl border border-white animate-slideUp text-center">
                    <h3 className="text-sm font-black mb-4 text-gray-800">เข้าสู่ระบบ Admin</h3>
                    <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3.5 rounded-2xl bg-white border outline-none text-[11px] shadow-sm text-center" placeholder="ใส่รหัสผ่าน" />
-                   <button type="submit" className="w-full h-11 rounded-2xl font-black text-xs mt-3 text-white shadow-lg flex items-center justify-center active:scale-95 transition-all" style={{ backgroundColor: COLORS.pinkDeep }}>Login</button>
+                   <button type="submit" className="w-full h-11 rounded-2xl font-black text-xs mt-3 text-white shadow-lg flex items-center justify-center active:scale-95 transition-all" style={{ backgroundColor: COLORS.pinkDeep }}>
+                      {isSaving ? <IconLoader size={16} className="animate-spin-slow mx-auto" /> : 'Login'}
+                   </button>
                    <button type="button" onClick={() => setShowAuthModal(false)} className="w-full text-[9px] font-bold text-gray-300 mt-2 uppercase tracking-widest hover:text-gray-500 transition-colors">Close</button>
                 </form>
               </div>
@@ -917,6 +918,84 @@
                     <button onClick={() => setShowRenewModal(false)} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-gray-500 bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all">ยกเลิก</button>
                     <button onClick={handleRenewSubmit} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-white bg-[#ffb8e1] hover:bg-[#e3a1c0] active:scale-95 transition-all shadow-md">
                         {isSaving ? <IconLoader size={14} className="animate-spin-slow mx-auto" /> : 'บันทึกวัน'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 6. Modal: อัปโหลดรูปโปรไฟล์ */}
+            {showImageModal && (
+              <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/20 backdrop-blur-[2px] animate-fadeIn">
+                <div className="bg-white/95 backdrop-blur-xl w-[90%] max-w-[280px] rounded-[30px] p-6 shadow-2xl border border-white animate-slideUp text-center box-border">
+                  <h3 className="text-[14px] font-black mb-1 text-[#827397]">เปลี่ยนรูปโปรไฟล์ 🐰</h3>
+                  <p className="text-[10px] font-bold text-[#a89cb5] mb-4">วางลิงก์รูปภาพ หรือ Google Drive</p>
+                  
+                  <div className="w-full flex items-center overflow-hidden bg-white rounded-2xl border-2 border-[#eed5f8] mb-5 shadow-inner focus-within:border-[#ffb8e1] transition-all box-border">
+                    <input 
+                      type="text" 
+                      value={tempImageUrl} 
+                      onChange={e => setTempImageUrl(e.target.value)} 
+                      className="w-full bg-transparent text-center p-3 outline-none text-[#827397] text-[11px] font-bold font-sans appearance-none min-w-0 box-border" 
+                      placeholder="https://..."
+                    />
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <button onClick={() => {setShowImageModal(false); setTempImageUrl('');}} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-gray-500 bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all">ยกเลิก</button>
+                    <button onClick={async () => {
+                        setIsSaving(true);
+                        let finalUrl = tempImageUrl;
+                        if (finalUrl.includes("drive.google.com/file/d/")) {
+                            const match = finalUrl.match(/\/d\/(.+?)\//);
+                            if (match && match[1]) finalUrl = `https://lh3.googleusercontent.com/d/${match[1]}`;
+                        }
+                        setProfileImage(finalUrl);
+                        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'saveProfileImage', imageUrl: finalUrl }) });
+                        setIsSaving(false);
+                        setShowImageModal(false);
+                        setTempImageUrl('');
+                    }} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-white bg-[#ffb8e1] hover:bg-[#e3a1c0] active:scale-95 transition-all shadow-md">
+                        {isSaving ? <IconLoader size={14} className="animate-spin-slow mx-auto" /> : 'บันทึกรูป'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 7. Modal: อัปโหลดรูปแบนเนอร์ */}
+            {showBannerModal && (
+              <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/20 backdrop-blur-[2px] animate-fadeIn">
+                <div className="bg-white/95 backdrop-blur-xl w-[90%] max-w-[280px] rounded-[30px] p-6 shadow-2xl border border-white animate-slideUp text-center box-border">
+                  <h3 className="text-[14px] font-black mb-1 text-[#827397]">เปลี่ยนรูปแบนเนอร์ 🖼️</h3>
+                  <p className="text-[10px] font-bold text-[#a89cb5] mb-4">วางลิงก์รูปภาพ หรือ Google Drive</p>
+                  
+                  <div className="w-full flex items-center overflow-hidden bg-white rounded-2xl border-2 border-[#eed5f8] mb-5 shadow-inner focus-within:border-[#ffb8e1] transition-all box-border">
+                    <input 
+                      type="text" 
+                      value={tempImageUrl} 
+                      onChange={e => setTempImageUrl(e.target.value)} 
+                      className="w-full bg-transparent text-center p-3 outline-none text-[#827397] text-[11px] font-bold font-sans appearance-none min-w-0 box-border" 
+                      placeholder="https://..."
+                    />
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <button onClick={() => {setShowBannerModal(false); setTempImageUrl('');}} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-gray-500 bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all">ยกเลิก</button>
+                    <button onClick={async () => {
+                        setIsSaving(true);
+                        let finalUrl = tempImageUrl;
+                        if (finalUrl.includes("drive.google.com/file/d/")) {
+                            const match = finalUrl.match(/\/d\/(.+?)\//);
+                            if (match && match[1]) finalUrl = `https://lh3.googleusercontent.com/d/${match[1]}`;
+                        }
+                        setBannerImage(finalUrl);
+                        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'saveBannerImage', imageUrl: finalUrl }) });
+                        setIsSaving(false);
+                        setShowBannerModal(false);
+                        setTempImageUrl('');
+                    }} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-white bg-[#ffb8e1] hover:bg-[#e3a1c0] active:scale-95 transition-all shadow-md">
+                        {isSaving ? <IconLoader size={14} className="animate-spin-slow mx-auto" /> : 'บันทึกรูป'}
                     </button>
                   </div>
                 </div>
