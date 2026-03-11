@@ -136,21 +136,40 @@
     ));
 
     const CheckDateCard = React.memo(({ checkDays, dueInXTasksLength, onOpenDaysModal, onCardClick, isActive }) => (
-      <div onClick={onCardClick} className={`bg-white/80 backdrop-blur-sm rounded-[28px] p-4 flex flex-col justify-between relative overflow-hidden transition-all cursor-pointer h-full group ${isActive ? 'border-2 border-[#ffb8e1] shadow-md shadow-[#ffb8e1]/30 bg-[#fffcf7] scale-[0.98]' : 'border border-white shadow-lg shadow-[#eed5f8]/30 hover:shadow-[#eed5f8]/50 hover:scale-[1.01]'}`}>
-        <div className={`absolute -right-2 -bottom-4 transition-transform duration-500 pointer-events-none ${isActive ? 'scale-110 opacity-20' : 'opacity-10 group-hover:scale-110 group-hover:-rotate-6'}`} style={{ color: COLORS.textMain }}><IconCalendar size={75} /></div>
+      <div 
+        onClick={onCardClick}
+        className={`bg-white/80 backdrop-blur-sm rounded-[28px] p-4 flex flex-col justify-between relative overflow-hidden transition-all cursor-pointer h-full group ${
+          isActive 
+            ? 'border-2 border-[#ffb8e1] shadow-md shadow-[#ffb8e1]/30 bg-[#fffcf7] scale-[0.98]' 
+            : 'border border-white shadow-lg shadow-[#eed5f8]/30 hover:shadow-[#eed5f8]/50 hover:scale-[1.01]'
+        }`}
+      >
+        <div className={`absolute -right-2 -bottom-4 transition-transform duration-500 pointer-events-none ${isActive ? 'scale-110 opacity-20' : 'opacity-10 group-hover:scale-110 group-hover:-rotate-6'}`} style={{ color: COLORS.textMain }}>
+            <IconCalendar size={75} />
+        </div>
+
         {isActive && (
             <div className="absolute top-4 left-4 flex items-center justify-center">
               <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-[#ffb8e1] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#e3a1c0]"></span>
             </div>
         )}
+
         <div className="flex justify-between items-start relative z-10">
             <div className={`flex flex-col ${isActive ? 'ml-3' : 'ml-0'} transition-all`}>
                 <span className="text-[9px] font-black text-[#a89cb5] uppercase tracking-wider mb-0.5">Advance</span>
                 <span className="text-[11px] font-black text-[#827397]">เช็ครายการต่ออายุเมล</span>
             </div>
-            <button onClick={(e) => { e.stopPropagation(); onOpenDaysModal(); }} className="bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-[9px] font-black shadow-sm border border-[#ffb8e1] text-[#827397] hover:bg-[#fffcf7] active:scale-95 transition-all flex items-center gap-1 z-20" title="เปลี่ยนจำนวนวัน">อีก {checkDays} วัน <span className="text-[7px] opacity-60 ml-0.5">▾</span></button>
+            
+            <button 
+              onClick={(e) => { e.stopPropagation(); onOpenDaysModal(); }} 
+              className="bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-[9px] font-black shadow-sm border border-[#ffb8e1] text-[#827397] hover:bg-[#fffcf7] active:scale-95 transition-all flex items-center gap-1 z-20"
+              title="เปลี่ยนจำนวนวัน"
+            >
+              อีก {checkDays} วัน <span className="text-[7px] opacity-60 ml-0.5">▾</span>
+            </button>
         </div>
+
         <div className="relative z-10 mt-1 flex items-baseline gap-1.5">
             <span className="text-[11px] font-bold text-[#827397]">พบ</span>
             <span className="text-3xl font-black leading-none" style={{ color: COLORS.pinkDeep }}>{dueInXTasksLength}</span>
@@ -161,7 +180,11 @@
 
     const OverdueCard = React.memo(({ overdueTasksLength, triggerBounce, isBouncing }) => (
       <div onClick={triggerBounce} className={`bg-white/80 backdrop-blur-sm rounded-[28px] p-2 flex flex-col items-center justify-center shadow-lg shadow-orange-500/10 border border-white h-full relative overflow-hidden transition-all duration-300 cursor-pointer ${isBouncing ? 'scale-95' : 'hover:scale-[1.02]'}`}>
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md text-[7px] font-black bg-white shadow-sm border border-orange-200 uppercase tracking-wider whitespace-nowrap z-10 text-orange-400 flex items-center gap-1"><IconAlertTriangle size={8} /> เลยกำหนด</div>
+        
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md text-[7px] font-black bg-white shadow-sm border border-orange-200 uppercase tracking-wider whitespace-nowrap z-10 text-orange-400 flex items-center gap-1">
+          <IconAlertTriangle size={8} /> เลยกำหนด
+        </div>
+        
         <div className="relative mt-5 flex flex-col items-center">
            <div className="relative">
              <div className="absolute inset-0 blur-lg rounded-full opacity-50 scale-125 bg-orange-300"></div>
@@ -214,15 +237,6 @@
 
       return (
         <div className="flex items-center gap-2 mb-2 w-full relative">
-          
-          {/* อิโมจิสำหรับสถานะ รอตัดบัตร (อยู่เลเยอร์กลาง z-10) */}
-          {task.status === 'doing' && (
-            <div className="absolute inset-0 pointer-events-none z-10 overflow-visible">
-              <div className="absolute top-[10%] left-10 text-[18px] animate-float-particle-1 drop-shadow-md">💜</div>
-              <div className="absolute top-[35%] left-14 text-[12px] animate-float-particle-3 drop-shadow-md" style={{ animationDelay: '1.5s' }}>🪻</div>
-              <div className="absolute bottom-2 left-11 text-[16px] animate-float-particle-2 drop-shadow-md" style={{ animationDelay: '0.5s' }}>💜</div>
-            </div>
-          )}
 
           {/* กรอบไอคอนด้านซ้าย (อยู่เลเยอร์บนสุด z-20) */}
           <div className="w-[52px] h-[52px] flex-shrink-0 flex items-center justify-center relative z-20">
@@ -291,6 +305,9 @@
       );
     });
 
+    // ==========================================
+    // 📅 COMPONENT: CalendarView (ปฏิทิน)
+    // ==========================================
     const CalendarView = React.memo(({ currentMonth, setCurrentMonth, selectedDate, setSelectedDate, today, tasks }) => {
       const year = currentMonth.getFullYear();
       const month = currentMonth.getMonth();
@@ -377,6 +394,7 @@
       const [showBannerModal, setShowBannerModal] = useState(false); 
       const [showDaysModal, setShowDaysModal] = useState(false); 
       
+      // State สำหรับ Modal ต่ออายุ
       const [showRenewModal, setShowRenewModal] = useState(false);
       const [renewingTask, setRenewingTask] = useState(null);
       const [newDueDate, setNewDueDate] = useState('');
@@ -418,7 +436,7 @@
       };
 
       useEffect(() => {
-        document.title = "test app"; 
+        document.title = "LILAC CHECK Q"; 
         loadData();
       }, []);
 
@@ -597,7 +615,7 @@
         setIsViewingAdvance(true); 
       };
 
-      // ✨ เพิ่มการจัดการ Null/Undefined ในตัวแปรให้เรียบร้อย ป้องกัน Error แดง
+      // ✨ แก้ปัญหา Error toLowerCase() ด้วยการใส่ ( || "") ก่อนแปลงเป็นตัวพิมพ์เล็ก
       const filteredAllTasks = useMemo(() => tasks.filter(t => {
         const clientStr = (t.client || "").toLowerCase();
         const appStr = (t.app || "").toLowerCase();
@@ -893,7 +911,7 @@
               </div>
             )}
 
-            {/* 5. Modal: ต่ออายุ (แก้ไขช่องใส่วันที่ล้นจอแล้ว) */}
+            {/* 5. Modal: ต่ออายุ (แก้ไขช่องใส่วันที่ล้นจอ) */}
             {showRenewModal && (
               <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/20 backdrop-blur-[2px] animate-fadeIn">
                 <div className="bg-white/95 backdrop-blur-xl w-[90%] max-w-[280px] rounded-[30px] p-6 shadow-2xl border border-white animate-slideUp text-center box-border">
@@ -930,9 +948,6 @@
             @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(25px, -15px); } }
             @keyframes float-reverse { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-25px, 15px); } }
             @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-            @keyframes float-particle-1 { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(-20px); opacity: 0; } }
-            @keyframes float-particle-2 { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(-15px) translateX(5px); opacity: 0; } }
-            @keyframes float-particle-3 { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(-25px) translateX(-5px); opacity: 0; } }
             @keyframes float-icon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
             @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
             @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -941,9 +956,6 @@
             @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
             .animate-text-wave { animation: text-wave 4s ease-in-out infinite; }
             .animate-breathe { animation: breathe 4s ease-in-out infinite; transform-origin: center; }
-            .animate-float-particle-1 { animation: float-particle-1 3s ease-out infinite; }
-            .animate-float-particle-2 { animation: float-particle-2 4s ease-out infinite 1s; }
-            .animate-float-particle-3 { animation: float-particle-3 3.5s ease-out infinite 0.5s; }
             .animate-float { animation: float 15s ease-in-out infinite; }
             .animate-float-reverse { animation: float-reverse 18s ease-in-out infinite; }
             .animate-float-icon { animation: float-icon 3s ease-in-out infinite; }
