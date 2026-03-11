@@ -108,21 +108,10 @@
         <div className="bg-white/40 backdrop-blur-md rounded-[32px] p-4 shadow-xl shadow-[#e9f4fa]/50 border border-white/50 flex items-center justify-between h-20 relative overflow-hidden group">
           <div className="absolute left-6 top-1/2 -translate-y-1/2 w-24 h-8 bg-[#fdd9ef]/60 blur-xl rounded-full"></div>
           <div className="flex flex-col justify-center ml-2 relative z-10">
-            <div className="flex items-center gap-1">
-              
-              {/* --- แก้ไขการตัดขอบตรงนี้ (เพิ่ม items-center, py-1, leading-none และเอาเงาออก) --- */}
-              <h1 className="text-2xl font-black italic tracking-tighter flex items-center">
-                {"CooKiz".split('').map((char, index) => (
-                  <span 
-                    key={index} 
-                    className="bg-gradient-to-br from-[#827397] to-[#a38ab5] bg-clip-text text-transparent inline-block animate-text-wave py-1 leading-none" 
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    {char}
-                  </span>
-                ))}
+            <div className="flex items-center gap-1.5 pb-1">
+              <h1 className="text-2xl font-black italic tracking-tighter text-[#827397] leading-relaxed">
+                CooKiz
               </h1>
-              
               <button onClick={() => isAdmin ? setIsAdmin(false) : setShowAuthModal(true)} className={`px-1.5 py-0.5 ml-1 rounded-full text-[7px] font-black uppercase tracking-widest border shadow-sm transition-all active:scale-95 ${isAdmin ? 'bg-white/60 text-[#827397] border-[#b5a8c2]' : 'bg-gray-100/80 text-gray-400 border-gray-200'}`}>
                 {isAdmin ? 'Admin' : 'Guest'}
               </button>
@@ -145,42 +134,23 @@
         </div>
       </div>
     ));
-    
-    const CheckDateCard = React.memo(({ checkDays, dueInXTasksLength, onOpenDaysModal, onCardClick, isActive }) => (
-      <div 
-        onClick={onCardClick}
-        className={`bg-white/80 backdrop-blur-sm rounded-[28px] p-4 flex flex-col justify-between relative overflow-hidden transition-all cursor-pointer h-full group ${
-          isActive 
-            ? 'border-2 border-[#ffb8e1] shadow-md shadow-[#ffb8e1]/30 bg-[#fffcf7] scale-[0.98]' 
-            : 'border border-white shadow-lg shadow-[#eed5f8]/30 hover:shadow-[#eed5f8]/50 hover:scale-[1.01]'
-        }`}
-      >
-        <div className={`absolute -right-2 -bottom-4 transition-transform duration-500 pointer-events-none ${isActive ? 'scale-110 opacity-20' : 'opacity-10 group-hover:scale-110 group-hover:-rotate-6'}`} style={{ color: COLORS.textMain }}>
-            <IconCalendar size={75} />
-        </div>
 
+    const CheckDateCard = React.memo(({ checkDays, dueInXTasksLength, onOpenDaysModal, onCardClick, isActive }) => (
+      <div onClick={onCardClick} className={`bg-white/80 backdrop-blur-sm rounded-[28px] p-4 flex flex-col justify-between relative overflow-hidden transition-all cursor-pointer h-full group ${isActive ? 'border-2 border-[#ffb8e1] shadow-md shadow-[#ffb8e1]/30 bg-[#fffcf7] scale-[0.98]' : 'border border-white shadow-lg shadow-[#eed5f8]/30 hover:shadow-[#eed5f8]/50 hover:scale-[1.01]'}`}>
+        <div className={`absolute -right-2 -bottom-4 transition-transform duration-500 pointer-events-none ${isActive ? 'scale-110 opacity-20' : 'opacity-10 group-hover:scale-110 group-hover:-rotate-6'}`} style={{ color: COLORS.textMain }}><IconCalendar size={75} /></div>
         {isActive && (
             <div className="absolute top-4 left-4 flex items-center justify-center">
               <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-[#ffb8e1] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#e3a1c0]"></span>
             </div>
         )}
-
         <div className="flex justify-between items-start relative z-10">
             <div className={`flex flex-col ${isActive ? 'ml-3' : 'ml-0'} transition-all`}>
                 <span className="text-[9px] font-black text-[#a89cb5] uppercase tracking-wider mb-0.5">Advance</span>
                 <span className="text-[11px] font-black text-[#827397]">เช็ครายการต่ออายุเมล</span>
             </div>
-            
-            <button 
-              onClick={(e) => { e.stopPropagation(); onOpenDaysModal(); }} 
-              className="bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-[9px] font-black shadow-sm border border-[#ffb8e1] text-[#827397] hover:bg-[#fffcf7] active:scale-95 transition-all flex items-center gap-1 z-20"
-              title="เปลี่ยนจำนวนวัน"
-            >
-              อีก {checkDays} วัน <span className="text-[7px] opacity-60 ml-0.5">▾</span>
-            </button>
+            <button onClick={(e) => { e.stopPropagation(); onOpenDaysModal(); }} className="bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-[9px] font-black shadow-sm border border-[#ffb8e1] text-[#827397] hover:bg-[#fffcf7] active:scale-95 transition-all flex items-center gap-1 z-20" title="เปลี่ยนจำนวนวัน">อีก {checkDays} วัน <span className="text-[7px] opacity-60 ml-0.5">▾</span></button>
         </div>
-
         <div className="relative z-10 mt-1 flex items-baseline gap-1.5">
             <span className="text-[11px] font-bold text-[#827397]">พบ</span>
             <span className="text-3xl font-black leading-none" style={{ color: COLORS.pinkDeep }}>{dueInXTasksLength}</span>
@@ -191,11 +161,7 @@
 
     const OverdueCard = React.memo(({ overdueTasksLength, triggerBounce, isBouncing }) => (
       <div onClick={triggerBounce} className={`bg-white/80 backdrop-blur-sm rounded-[28px] p-2 flex flex-col items-center justify-center shadow-lg shadow-orange-500/10 border border-white h-full relative overflow-hidden transition-all duration-300 cursor-pointer ${isBouncing ? 'scale-95' : 'hover:scale-[1.02]'}`}>
-        
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md text-[7px] font-black bg-white shadow-sm border border-orange-200 uppercase tracking-wider whitespace-nowrap z-10 text-orange-400 flex items-center gap-1">
-          <IconAlertTriangle size={8} /> เลยกำหนด
-        </div>
-        
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md text-[7px] font-black bg-white shadow-sm border border-orange-200 uppercase tracking-wider whitespace-nowrap z-10 text-orange-400 flex items-center gap-1"><IconAlertTriangle size={8} /> เลยกำหนด</div>
         <div className="relative mt-5 flex flex-col items-center">
            <div className="relative">
              <div className="absolute inset-0 blur-lg rounded-full opacity-50 scale-125 bg-orange-300"></div>
@@ -219,7 +185,6 @@
       due.setHours(0,0,0,0);
       const daysDiff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
 
-      // กำหนด Badge สีและข้อความตามสถานะ
       let statusBadge = null;
       if (task.status === 'done') {
           statusBadge = <span className="text-[9px] font-bold bg-gray-50 text-gray-400 px-2 py-0.5 rounded-full border border-gray-100">ต่ออายุแล้ว</span>;
@@ -233,15 +198,14 @@
           statusBadge = <span className="text-[9px] font-bold bg-[#e9f4fa] text-[#8FA4B5] px-2 py-0.5 rounded-full border border-[#e9f4fa]">อีก {daysDiff} วันถึงกำหนด</span>;
       }
 
-      // ระบบเลือก Icon URL (รูปภาพ) ตามสถานะ
-      let iconUrl = "https://i.ibb.co/Q7HyMmRC/image.png"; // สีเขียว (Default)
+      let iconUrl = "https://i.ibb.co/Q7HyMmRC/image.png"; 
       if (task.status === 'done') iconUrl = "https://i.ibb.co/Q7HyMmRC/image.png"; 
       else if (task.status === 'doing') iconUrl = "https://i.ibb.co/6q4pLWk/image.png"; 
       else if (task.status === 'todo') {
-          if (daysDiff < 0) iconUrl = "https://i.ibb.co/nNfLK8Md/image.png"; // นาฬิกาแดง/ส้ม
-          else if (daysDiff >= 0 && daysDiff <= 3) iconUrl = "https://i.ibb.co/Q3rRP3HZ/image.png"; // สีเหลือง
+          if (daysDiff < 0) iconUrl = "https://i.ibb.co/nNfLK8Md/image.png"; 
+          else if (daysDiff >= 0 && daysDiff <= 3) iconUrl = "https://i.ibb.co/Q3rRP3HZ/image.png"; 
       }
-      else if (task.status === 'cancelled') iconUrl = "https://i.ibb.co/gMTYmhyf/image.png"; // รูปกากบาท
+      else if (task.status === 'cancelled') iconUrl = "https://i.ibb.co/gMTYmhyf/image.png"; 
 
       const handleToggleDone = (e) => {
           e.stopPropagation();
@@ -249,9 +213,18 @@
       };
 
       return (
-        <div className="flex items-center gap-2 mb-2 w-full">
+        <div className="flex items-center gap-2 mb-2 w-full relative">
           
-          {/* กรอบไอคอนด้านซ้าย */}
+          {/* อิโมจิสำหรับสถานะ รอตัดบัตร (อยู่เลเยอร์กลาง z-10) */}
+          {task.status === 'doing' && (
+            <div className="absolute inset-0 pointer-events-none z-10 overflow-visible">
+              <div className="absolute top-[10%] left-10 text-[18px] animate-float-particle-1 drop-shadow-md">💜</div>
+              <div className="absolute top-[35%] left-14 text-[12px] animate-float-particle-3 drop-shadow-md" style={{ animationDelay: '1.5s' }}>🪻</div>
+              <div className="absolute bottom-2 left-11 text-[16px] animate-float-particle-2 drop-shadow-md" style={{ animationDelay: '0.5s' }}>💜</div>
+            </div>
+          )}
+
+          {/* กรอบไอคอนด้านซ้าย (อยู่เลเยอร์บนสุด z-20) */}
           <div className="w-[52px] h-[52px] flex-shrink-0 flex items-center justify-center relative z-20">
               <img
                   src={iconUrl}
@@ -260,16 +233,8 @@
               />
           </div>
 
-          {/* การ์ดข้อมูลด้านขวา */}
-          <div onClick={() => isAdmin && onEdit(task)} className={`relative flex-1 rounded-[22px] p-3 transition-all border shadow-sm group overflow-hidden ${isAdmin ? 'active:scale-[0.98] cursor-pointer' : ''} bg-white/90`} style={{ backgroundColor: (task.status === 'done' || task.status === 'cancelled') ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.95)', borderColor: task.status === 'doing' ? COLORS.orangeDeep : ((task.status === 'done' || task.status === 'cancelled') ? 'transparent' : COLORS.white), opacity: (task.status === 'done' || task.status === 'cancelled') ? 0.7 : 1 }}>
-            
-            {task.status === 'doing' && (
-              <div className="absolute inset-0 pointer-events-none z-0">
-                <div className="absolute -bottom-2 -left-3 text-[14px] animate-float-particle-1 drop-shadow-sm">💜</div>
-                <div className="absolute top-[30%] -left-4 text-[10px] animate-float-particle-3 drop-shadow-sm" style={{ animationDelay: '1.5s' }}>🪻</div>
-                <div className="absolute -bottom-2 -right-3 text-[14px] animate-float-particle-2 drop-shadow-sm" style={{ animationDelay: '0.5s' }}>💜</div>
-              </div>
-            )}
+          {/* การ์ดข้อมูลด้านขวา (อยู่เลเยอร์ล่างสุด z-0) */}
+          <div onClick={() => isAdmin && onEdit(task)} className={`relative flex-1 z-0 rounded-[22px] p-3 transition-all border shadow-sm group overflow-hidden ${isAdmin ? 'active:scale-[0.98] cursor-pointer' : ''} bg-white/90`} style={{ backgroundColor: (task.status === 'done' || task.status === 'cancelled') ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.95)', borderColor: task.status === 'doing' ? COLORS.orangeDeep : ((task.status === 'done' || task.status === 'cancelled') ? 'transparent' : COLORS.white), opacity: (task.status === 'done' || task.status === 'cancelled') ? 0.7 : 1 }}>
             
             <div className="absolute left-2 top-3 bottom-3 w-1 rounded-full shadow-sm z-10" style={{ backgroundColor: task.channel === 'LINE' ? '#e9f4fa' : task.channel === 'FB' || task.channel === 'FACEBOOK' ? '#eed5f8' : task.channel === 'IG' ? '#ffe9ef' : COLORS.purpleDeep }}></div>
             
@@ -326,9 +291,6 @@
       );
     });
 
-    // ==========================================
-    // 📅 COMPONENT: CalendarView (ปฏิทิน)
-    // ==========================================
     const CalendarView = React.memo(({ currentMonth, setCurrentMonth, selectedDate, setSelectedDate, today, tasks }) => {
       const year = currentMonth.getFullYear();
       const month = currentMonth.getMonth();
@@ -415,7 +377,6 @@
       const [showBannerModal, setShowBannerModal] = useState(false); 
       const [showDaysModal, setShowDaysModal] = useState(false); 
       
-      // State สำหรับ Modal ต่ออายุ
       const [showRenewModal, setShowRenewModal] = useState(false);
       const [renewingTask, setRenewingTask] = useState(null);
       const [newDueDate, setNewDueDate] = useState('');
@@ -457,7 +418,7 @@
       };
 
       useEffect(() => {
-        document.title = "LILAC CHECK Q"; 
+        document.title = "test app"; 
         loadData();
       }, []);
 
@@ -481,7 +442,6 @@
         }
       };
 
-      // ===== COMPUTED VALUES =====
       const todayStr = useMemo(() => {
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -514,16 +474,12 @@
         return base;
       }, [isViewingAdvance, dueInXTasks, tasks, todayStr, todayFilter]);
 
-      // ===== ฟังก์ชันเปลี่ยนสถานะ (Real-time Background Update) =====
       const toggleCancel = useCallback((e, id) => {
         e.stopPropagation();
         const task = tasks.find(t => t.id === id);
         const newStatus = task.status === 'cancelled' ? 'todo' : 'cancelled';
         
-        // อัปเดตหน้าเว็บทันที
         setTasks(prev => prev.map(t => t.id === id ? { ...t, status: newStatus } : t));
-        
-        // ส่งไปบันทึกหลังบ้าน
         fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'updateTaskStatus', taskId: id, newStatus: newStatus }) });
       }, [tasks]);
 
@@ -540,7 +496,7 @@
         e.stopPropagation();
         if (task.status !== 'done') {
            setRenewingTask(task);
-           let currentDue = new Date(); // ถ้าไม่มีวันเดิม ให้เริ่มจากวันนี้
+           let currentDue = new Date(); 
            if(task.dueDate) currentDue = new Date(task.dueDate);
            
            currentDue.setMonth(currentDue.getMonth() + 1);
@@ -548,7 +504,6 @@
            setNewDueDate(nextMonthStr);
            setShowRenewModal(true);
         } else {
-           // ถ้ายกเลิกต่ออายุ
            const updatedTask = { ...task, status: 'todo' };
            setTasks(prev => prev.map(t => t.id === task.id ? updatedTask : t));
            fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'updateTaskStatus', taskId: task.id, newStatus: 'todo' }) });
@@ -557,14 +512,12 @@
 
       const handleRenewSubmit = async () => {
         setIsSaving(true);
-        const updatedTask = { ...renewingTask, dueDate: newDueDate, status: 'todo' }; // เลื่อนวันแล้วกลับไปเป็นรอชำระ
+        const updatedTask = { ...renewingTask, dueDate: newDueDate, status: 'todo' }; 
         
-        // อัปเดตหน้าเว็บทันที
         setTasks(prev => prev.map(t => t.id === updatedTask.id ? updatedTask : t));
         setShowRenewModal(false);
         setRenewingTask(null);
         
-        // ส่งไปบันทึกหลังบ้านแบบเต็ม Task
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'saveOrUpdateTask', task: updatedTask }) });
         setIsSaving(false);
       };
@@ -591,7 +544,6 @@
           status: editingTask ? editingTask.status : 'todo'
         };
 
-        // ส่งไปบันทึก
         try {
            await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'saveOrUpdateTask', task: taskData }) });
            setTasks(prev => editingTask ? prev.map(t => t.id === taskData.id ? taskData : t) : [...prev, taskData]);
@@ -645,13 +597,18 @@
         setIsViewingAdvance(true); 
       };
 
+      // ✨ เพิ่มการจัดการ Null/Undefined ในตัวแปรให้เรียบร้อย ป้องกัน Error แดง
       const filteredAllTasks = useMemo(() => tasks.filter(t => {
-        const matchSearch = t.app.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            t.client.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            t.email.toLowerCase().includes(searchQuery.toLowerCase());
+        const clientStr = (t.client || "").toLowerCase();
+        const appStr = (t.app || "").toLowerCase();
+        const emailStr = (t.email || "").toLowerCase();
+        const queryStr = (searchQuery || "").toLowerCase();
+        
+        const matchSearch = clientStr.includes(queryStr) || appStr.includes(queryStr) || emailStr.includes(queryStr);
         
         const todayObj = new Date(); todayObj.setHours(0,0,0,0);
-        const dueObj = new Date(t.dueDate); dueObj.setHours(0,0,0,0);
+        const dueObj = t.dueDate ? new Date(t.dueDate) : new Date(); 
+        dueObj.setHours(0,0,0,0);
 
         let matchFilter = false;
         if (filterType === 'all') matchFilter = true;
@@ -903,7 +860,7 @@
                          </button>
                        )}
                      </div>
-                     <button type="button" onClick={() => { setShowModal(false); setEditingTask(null); }} className="w-full text-[9px] font-bold text-gray-300 mt-2 uppercase tracking-widest">Close</button>
+                     <button type="button" onClick={() => { setShowModal(false); setEditingTask(null); }} className="w-full text-[9px] font-bold text-gray-300 mt-2 uppercase tracking-widest hover:text-gray-500 transition-colors">Close</button>
                    </div>
                 </form>
               </div>
@@ -916,7 +873,7 @@
                    <h3 className="text-sm font-black mb-4 text-gray-800">เข้าสู่ระบบ Admin</h3>
                    <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3.5 rounded-2xl bg-white border outline-none text-[11px] shadow-sm text-center" placeholder="ใส่รหัสผ่าน" />
                    <button type="submit" className="w-full h-11 rounded-2xl font-black text-xs mt-3 text-white shadow-lg flex items-center justify-center active:scale-95 transition-all" style={{ backgroundColor: COLORS.pinkDeep }}>Login</button>
-                   <button type="button" onClick={() => setShowAuthModal(false)} className="w-full text-[9px] font-bold text-gray-300 mt-2 uppercase tracking-widest">Close</button>
+                   <button type="button" onClick={() => setShowAuthModal(false)} className="w-full text-[9px] font-bold text-gray-300 mt-2 uppercase tracking-widest hover:text-gray-500 transition-colors">Close</button>
                 </form>
               </div>
             )}
@@ -936,22 +893,26 @@
               </div>
             )}
 
-            {/* 5. Modal: ต่ออายุ */}
+            {/* 5. Modal: ต่ออายุ (แก้ไขช่องใส่วันที่ล้นจอแล้ว) */}
             {showRenewModal && (
               <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/20 backdrop-blur-[2px] animate-fadeIn">
-                <div className="bg-white/95 backdrop-blur-xl w-full max-w-[260px] rounded-[30px] p-6 shadow-2xl border border-white animate-slideUp text-center">
+                <div className="bg-white/95 backdrop-blur-xl w-[90%] max-w-[280px] rounded-[30px] p-6 shadow-2xl border border-white animate-slideUp text-center box-border">
                   <div className="w-14 h-14 rounded-full bg-[#fffcf7] text-[#ffb8e1] flex items-center justify-center mx-auto mb-3 shadow-sm border border-[#ffb8e1]">
                     <IconCheck size={26} />
                   </div>
                   <h3 className="text-[14px] font-black mb-1 text-[#827397]">ต่ออายุรายการ ✨</h3>
                   <p className="text-[10px] font-bold text-[#a89cb5] mb-4">กำหนดวันชำระรอบถัดไป</p>
                   
-                  <input 
-                    type="date" 
-                    value={newDueDate} 
-                    onChange={e => setNewDueDate(e.target.value)} 
-                    className="w-full text-center p-3 bg-white rounded-2xl border-2 border-[#eed5f8] outline-none focus:border-[#ffb8e1] text-[#827397] mb-5 shadow-inner text-[12px] font-bold cursor-pointer font-sans" 
-                  />
+                  {/* กล่องหุ้ม Input แก้ปัญหาวันที่ล้นจอในมือถือ (เพิ่ม appearance-none และ min-w-0) */}
+                  <div className="w-full flex items-center overflow-hidden bg-white rounded-2xl border-2 border-[#eed5f8] mb-5 shadow-inner focus-within:border-[#ffb8e1] transition-all box-border">
+                    <input 
+                      type="date" 
+                      value={newDueDate} 
+                      onChange={e => setNewDueDate(e.target.value)} 
+                      className="w-full bg-transparent text-center p-3 outline-none text-[#827397] text-[13px] font-bold cursor-pointer font-sans appearance-none min-w-0 box-border" 
+                      style={{ maxWidth: '100%', WebkitAppearance: 'none' }}
+                    />
+                  </div>
                   
                   <div className="flex gap-2">
                     <button onClick={() => setShowRenewModal(false)} className="flex-1 py-3 rounded-2xl font-black text-[10px] text-gray-500 bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all">ยกเลิก</button>
@@ -992,13 +953,8 @@
             .animate-spin-slow { animation: spin-slow 4s linear infinite; }
             
             /* Hide scrollbar */
-            .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-            }
-            .scrollbar-hide {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-            }
+            .scrollbar-hide::-webkit-scrollbar { display: none; }
+            .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
           `}</style>
         </div>
       );
@@ -1009,6 +965,3 @@
   </script>
 </body>
 </html>
-
-
-
