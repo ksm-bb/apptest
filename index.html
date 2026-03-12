@@ -107,9 +107,20 @@
 
               <h1
                 className="text-[26px] flex items-center text-[#827397]"
-                style={{ fontFamily: 'Comfortaa, sans-serif', fontWeight: 700, letterSpacing: '-0.5px', lineHeight: '1.2' }}
+                style={{ fontFamily: '-apple-system, "SF Pro Rounded", "Arial Rounded MT Bold", Arial, sans-serif', fontWeight: 800, fontStyle: 'italic', lineHeight: '1.6' }}
               >
-                CoolKiz
+                {"CoolKiz".split('').map((char, index) => (
+                  <span
+                    key={index}
+                    className="inline-block animate-text-wave px-[1px] pb-2"
+                    style={{
+                      animationDelay: `${index * 0.1}s`,
+                      willChange: 'transform',
+                    }}
+                  >
+                    {char}
+                  </span>
+                ))}
               </h1>
 
               <button onClick={() => isAdmin ? setIsAdmin(false) : setShowAuthModal(true)} className={`px-1.5 py-0.5 ml-1 rounded-full text-[7px] font-black uppercase tracking-widest border shadow-sm transition-all active:scale-95 ${isAdmin ? 'bg-white/60 text-[#827397] border-[#b5a8c2]' : 'bg-gray-100/80 text-gray-400 border-gray-200'}`}>
